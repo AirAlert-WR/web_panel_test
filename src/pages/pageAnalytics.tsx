@@ -1,5 +1,5 @@
 import * as Icons from "@tabler/icons-react";
-import {ChartAreaInteractive} from "@/components/chart-area-interactive.tsx";
+import {ChartAreaInteractive} from "@/components/custom/embedded/chart-area-interactive.tsx";
 
 
 export const DATA = {

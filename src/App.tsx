@@ -1,18 +1,17 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import {MySidebar, MySiteHeader} from "@/components/custom/global";
 
-import * as Pages from "./pages"
+import { useCurrentPage } from "./pages"
 
 export default function App() {
 
     return (
         <SidebarProvider>
-            <AppSidebar variant="inset" />
+            <MySidebar variant="inset" />
             <SidebarInset>
-                <SiteHeader />
+                <MySiteHeader />
                 <div className="flex flex-1 flex-col">
-                    {Pages.useCurrentPage()?.component()}
+                    {useCurrentPage().component()}
                 </div>
             </SidebarInset>
         </SidebarProvider>

@@ -1,43 +1,35 @@
 import * as React from "react"
-import * as Icons from "@tabler/icons-react"
 
-import { NavUser } from "@/components/nav-user"
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter, SidebarGroup, SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
+    SidebarGroup,
+    SidebarHeader,
+    SidebarFooter,
+    SidebarGroupContent,
+    SidebarMenuItem,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarContent,
+    Sidebar,
+} from "@/components/ui/sidebar.tsx"
+
+import { MyUserComponent } from "@/components/custom/embedded/nav-user.tsx"
 
 import * as Pages from "@/pages"
-
-const data = {
-  // User data TODO TEMPORARY
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/logo.png",
-    onLogout: () => null,
-  }
-}
+import {Avatar, AvatarFallback, AvatarImage} from "@radix-ui/react-avatar";
 
 function NavigationSection(
-    { items, ...props }: {
-      items: Pages.Page[]
-    } & React.ComponentPropsWithoutRef<typeof SidebarGroup>
+    { ...props }: React.ComponentPropsWithoutRef<typeof SidebarGroup>
 ) {
-  const setCurrentPage = Pages.usePageStore((state) => state.setCurrentPage)
+    const items= Pages.usePageStore.getState().pages
   return (
       <SidebarGroup {...props}>
         <SidebarGroupContent>
           <SidebarMenu>
             {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton variant={"outline"} disabled={!item.enabled}
-                                     onClick={() =>  setCurrentPage(item.id)}>
+                  <SidebarMenuButton
+                      variant="default" disabled={!item.enabled}
+                      onClick={() =>  Pages.usePageStore.getState().setCurrentPage(item.id)}>
 
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
@@ -51,7 +43,7 @@ function NavigationSection(
   )
 }
 
-export function AppSidebar(
+export function MySidebar(
     { ...props }: React.ComponentProps<typeof Sidebar>
 ) {
   return (
@@ -62,10 +54,13 @@ export function AppSidebar(
 
             {/* Application caption as a button*/}
             <SidebarMenuButton
-              className="bg-primary text-primary-foreground data-[slot=sidebar-menu-button]:!p-1.5"
+              className="bg-primary text-primary-foreground h-56 flex flex-col items-center justify-center gap-1 px-2 py-3 text-center"
               onClick={() =>  Pages.usePageStore.getState().setCurrentPage(Pages.DefaultPageID)}
             >
-              <Icons.IconInnerShadowTop className="!size-5" />
+                <Avatar className="h-40 w-40">
+                    <AvatarImage src="/logo.png" alt="App Logo" />
+                    <AvatarFallback>AA</AvatarFallback>
+                </Avatar>
               <span className="text-base font-semibold">AirAlert Dashboard</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -74,7 +69,7 @@ export function AppSidebar(
       <SidebarContent>
 
         {/* Primary navigation items */}
-        <NavigationSection id={"NavigationMain"} items={Pages.usePageStore.getState().pages} />
+        <NavigationSection />
 
         {/* Secondary navigation items TODO OPTIONALLY */}
         {/*<NavigationSection id={"NavigationSecondary"} items={data.navSecondary} className={"mt-auto"}/>*/}
@@ -83,7 +78,7 @@ export function AppSidebar(
       <SidebarFooter>
 
         {/* User account button */}
-        <NavUser user={data.user} />
+        <MyUserComponent />
 
       </SidebarFooter>
     </Sidebar>

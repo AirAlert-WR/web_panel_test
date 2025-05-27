@@ -8,7 +8,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/ui/avatar"
+} from "@/components/ui/avatar.tsx"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,13 +17,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu.tsx"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar.tsx"
 
 function AvatarElement(
     {
@@ -52,18 +52,15 @@ function AvatarElement(
   )
 }
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-    onLogout: () => void
-  }
-}) {
+export function MyUserComponent() {
   const { isMobile } = useSidebar()
 
+  const user = {
+    name: "",
+    email: "",
+    avatar: "/logo.png",
+    onLogout: () => {}
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
