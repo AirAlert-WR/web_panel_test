@@ -21,7 +21,7 @@ export function MySiteHeader() {
           <h1 className="text-sm font-medium content-center">Copyright (C) 2025 AirAlert</h1>
           <Button asChild size="lg" className="hidden sm:flex" color={"black"}>
           <a
-              href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
+              href="https://github.com/AirAlert-WR"
               rel="noopener noreferrer"
               target="_blank"
               className="dark:text-foreground"

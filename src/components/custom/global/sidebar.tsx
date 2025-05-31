@@ -51,7 +51,6 @@ export function MySidebar(
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-
             {/* Application caption as a button*/}
             <SidebarMenuButton
               className="bg-primary text-primary-foreground h-56 flex flex-col items-center justify-center gap-1 px-2 py-3 text-center"
