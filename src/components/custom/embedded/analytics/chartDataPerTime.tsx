@@ -7,33 +7,45 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/comp
 import {type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart.tsx"
 import type {FilteredMeasurementData, MeasurementData} from "@/types/apiTypes.ts";
 
-//type ChartConfig = Record<string, { label: string; color: string }>
 
-interface ChartDataPerTimeProps {
-  data: FilteredMeasurementData[] // API-Daten
-  measurementKey: keyof MeasurementData // z.B. "temperature"
-}
-
-export function ChartDataPerTime({ data, measurementKey }: ChartDataPerTimeProps) {
+/**
+ * Method for creating a diagram (specialized on a single measurement) for the analytics page
+ *
+ * @author Danilo Bleul
+ * @since 1.0
+ *
+ * @param data The whole data fetched from the API function
+ * @see FilteredMeasurementData
+ * @param measurementKey the key which the data should be filtered to
+ * @see MeasurementData
+ *
+ * @constructor
+ */
+export function ChartDataPerTime(
+    { data, measurementKey }: {
+        data: FilteredMeasurementData[]
+        measurementKey: keyof MeasurementData
+    }
+) {
   const isMobile = useIsMobile()
 
-  // Extrahiere alle Controller-IDs
+  // Extract all unique controller IDs
   const controllerIds = Array.from(
       new Set(data.flatMap(entry => entry.data.map(d => d.controllerID)))
   )
 
-  // Erstelle ChartConfig dynamisch pro Controller
+  // Create chart configuration based on controller IDs (for displaying)
   const chartConfig: ChartConfig = Object.fromEntries(
       controllerIds.map(id => [
         id,
         {
           label: id,
-          color: `hsl(${Math.random() * 360}, 70%, 50%)` // Oder per definierter Farbpalette
+          color: `hsl(${Math.random() * 360}, 70%, 50%)`
         }
       ])
   )
 
-  // Mapping der API-Daten in Chart-kompatible Struktur
+  // Filtering the chart data according to the measurementKey
   const chartData = data.map(entry => {
     const point: Record<string, string | number> = {
       date: entry.timestamp.toString()
@@ -44,13 +56,17 @@ export function ChartDataPerTime({ data, measurementKey }: ChartDataPerTimeProps
     return point
   })
 
+  // Exporting card title
+  const cardTitle = measurementKey.toString().toUpperCase()
+
+  // Drawing the diagram
   return (
       <Card className="@container/card">
+          {/* Header */}
         <CardHeader>
-          <CardTitle>{measurementKey.toString().toUpperCase()}</CardTitle>
+          <CardTitle>{cardTitle}</CardTitle>
           <CardDescription>
-            <span className="hidden @[540px]/card:block">Last 3 months</span>
-            <span className="@[540px]/card:hidden">3 months</span>
+            <span className="hidden @[540px]/card:block">Interactive diagram for {cardTitle} values</span>
           </CardDescription>
         </CardHeader>
         <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
@@ -58,6 +74,7 @@ export function ChartDataPerTime({ data, measurementKey }: ChartDataPerTimeProps
               config={chartConfig}
               className="aspect-auto h-[250px] w-full"
           >
+              {/* Line-based chart */}
             <AreaChart
                 data={chartData}
             >
@@ -77,6 +94,7 @@ export function ChartDataPerTime({ data, measurementKey }: ChartDataPerTimeProps
                     })
                   }}
               />
+                {/* Hovering element */}
               <ChartTooltip
                   cursor={false}
                   defaultIndex={isMobile ? -1 : chartData.length - 1}

@@ -24,26 +24,33 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar.tsx"
+import type {SidebarUserData} from "@/components/custom/embedded/sidebarUser.types.ts";
 
+/**
+ * Method for creating an avatar subcomponent
+ *
+ * @author Danilo Bleul
+ * @since 1.0
+ *
+ * @param user The user data to display
+ * @see SidebarUserData
+ *
+ * @constructor
+ */
 function AvatarElement(
-    {
-      user,
-    }: {
-      user: {
-        name: string
-        email: string
-        avatar: string
-      }
-    })
+    {user}: {
+      user: SidebarUserData
+    }
+)
 {
   return (
       <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
         <Avatar className="h-8 w-8 rounded-lg">
-          <AvatarImage src={user.avatar} alt={user.name} />
+          <AvatarImage src={user.avatarPath} alt={user.userName} />
           <AvatarFallback className="rounded-lg">CN</AvatarFallback>
         </Avatar>
         <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-medium">{user.name}</span>
+          <span className="truncate font-medium">{user.userName}</span>
           <span className="text-muted-foreground truncate text-xs">
             {user.email}
           </span>
@@ -52,15 +59,24 @@ function AvatarElement(
   )
 }
 
-export function MyUserComponent() {
+/**
+ * Method for creating the user management component, displayed in the sidebar
+ *
+ * @author Danilo Bleul
+ * @since 1.0
+ *
+ * @param data The user data to display
+ * @see SidebarUserData
+ *
+ * @constructor
+ */
+export function SidebarUserComponent(
+    {data}: {
+      data: SidebarUserData
+    }
+) {
   const { isMobile } = useSidebar()
 
-  const user = {
-    name: "",
-    email: "",
-    avatar: "/logo.png",
-    onLogout: () => {}
-  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -71,7 +87,7 @@ export function MyUserComponent() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {/* Avatar element*/}
-              <AvatarElement user={user} />
+              <AvatarElement user={data} />
 
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -85,7 +101,7 @@ export function MyUserComponent() {
             <DropdownMenuLabel className="p-0 font-normal">
 
               {/*Avatar element*/}
-              <AvatarElement user={user} />
+              <AvatarElement user={data} />
 
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -96,7 +112,7 @@ export function MyUserComponent() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
+            <DropdownMenuItem variant="destructive" onClick={data.onLogout}>
               <IconLogout />
               Log out
             </DropdownMenuItem>

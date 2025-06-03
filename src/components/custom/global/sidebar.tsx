@@ -12,10 +12,11 @@ import {
     Sidebar,
 } from "@/components/ui/sidebar.tsx"
 
-import { MyUserComponent } from "@/components/custom/embedded/nav-user.tsx"
+import { SidebarUserComponent } from "@/components/custom/embedded/sidebarUser.tsx"
 
 import * as Pages from "@/pages"
 import {Avatar, AvatarFallback, AvatarImage} from "@radix-ui/react-avatar";
+import type {SidebarUserData} from "@/components/custom/embedded/sidebarUser.types.ts";
 
 function NavigationSection(
     { ...props }: React.ComponentPropsWithoutRef<typeof SidebarGroup>
@@ -44,7 +45,9 @@ function NavigationSection(
 }
 
 export function MySidebar(
-    { ...props }: React.ComponentProps<typeof Sidebar>
+    { userData, ...props }: {
+        userData: SidebarUserData
+    } & React.ComponentProps<typeof Sidebar>
 ) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -77,7 +80,7 @@ export function MySidebar(
       <SidebarFooter>
 
         {/* User account button */}
-        <MyUserComponent />
+        <SidebarUserComponent data={userData} />
 
       </SidebarFooter>
     </Sidebar>
