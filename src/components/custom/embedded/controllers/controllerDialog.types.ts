@@ -1,8 +1,7 @@
 
 // ENUM ControllerDialogKind
-import {
-    type ControllerProperties
-} from "./controllerProperties";
+
+import type {ControllerProperties} from "@/types/apiTypes.ts";
 
 const Kind = {
     CREATE: 0,
@@ -63,5 +62,5 @@ export const ControllerDialogSubmitResult = Result
  */
 export type ControllerDialogCallback = (
     result: ControllerDialogSubmitResult,
-    properties?: ControllerProperties
+    properties: ControllerProperties
 ) => void;

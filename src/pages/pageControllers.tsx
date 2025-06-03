@@ -26,19 +26,19 @@ function Content() {
     const controllers: ControllerProperties[] = [
         {
             id: "Controller1",
-            interval: 1
+            interval: 15
         },
         {
             id: "Controller2",
-            interval: 2,
+            interval: 20,
         },
         {
             id: "Controller3",
-            interval: 3,
+            interval: 30,
         },
         {
             id: "Controller4",
-            interval: 4,
+            interval: 40,
         },
     ]
 
@@ -60,9 +60,11 @@ function Content() {
 
                     {/* Other elements: fetched controllers */}
                     {controllers.map((controller) => (
-                        <ControllerCard controller={controller} onDialogSubmit={() => {
+                        <ControllerCard controller={controller} onDialogSubmit={(result, properties) => {
 
                             //TODO Change state or similar
+                            console.log(properties)
+                            console.log(result)
 
                         }} />
                     ))}

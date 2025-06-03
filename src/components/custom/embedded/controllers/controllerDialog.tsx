@@ -23,9 +23,10 @@ import {
     ControllerDialogSubmitResult,
     type ControllerDialogCallback,
 } from "./controllerDialog.types"
-import {
-    type ControllerProperties
-} from "./controllerProperties";
+
+import {ControllerProperties, ControllerPropertiesSchema} from "@/types/apiTypes.ts";
+import {useState} from "react";
+import {ZodNumber} from "zod";
 
 /**
  * Method for creating the button footer of the dialog
@@ -93,6 +94,67 @@ function ControllerDialogButtons(
     return result()
 }
 
+function ControllerDialogInputs({data, onValueChange}: {
+    data: ControllerProperties,
+    onValueChange: (data: ControllerProperties) => void,
+}) {
+    // Saving Shape
+    const shape = ControllerPropertiesSchema.shape
+
+    // Saving entries for returning in result
+    const entries = Object.entries(shape).map(([key, fieldSchema]) => {
+        const val = data[key as keyof typeof data];
+
+        // Getting input type
+        let inputType = "text";
+        if (fieldSchema._def.typeName === "ZodNumber") inputType = "number";
+
+        // Min and Max values for numbers
+        let min = undefined
+        let max = undefined
+        if (fieldSchema instanceof ZodNumber) {
+            const minCheck = fieldSchema._def.checks.find(c => c.kind === "min");
+            const maxCheck = fieldSchema._def.checks.find(c => c.kind === "max");
+
+            min = minCheck?.value;
+            max = maxCheck?.value;
+        }
+
+        return (
+            <div key={key} className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right capitalize" htmlFor={key}>
+                    {key}
+                </Label>
+
+                <Input
+                    id={key}
+                    type={inputType}
+                    className="col-span-3"
+                    value={val}
+                    min={min}
+                    max={max}
+                    onChange={(e) => {
+                        const newValue =
+                            inputType === "number"
+                                ? parseInt(e.target.value)
+                                : e.target.value;
+
+                        onValueChange({ ...data, [key]: newValue });
+                    }}
+                />
+            </div>
+        );
+    })
+
+    return (
+        <div className="grid gap-4 py-4">
+
+            {entries}
+
+        </div>
+    );
+}
+
 /**
  * Method for creating a dialog for managing a controller
  *
@@ -117,28 +179,27 @@ export function ControllerDialog(
     } & React.ComponentProps<typeof DialogContent>,
 ) {
 
-    // Saving the dialog caption
-    const caption = `Settings of ${ (kind == ControllerDialogKind.CREATE) 
+    const initialProperties = controller ?? ControllerProperties
+
+    // Setting state attribute for rendering changed values
+    const [controllerProperties, setControllerProperties] = useState<ControllerProperties>(
+        ControllerPropertiesSchema.parse(initialProperties)
+    )
+
+    // Defining a dialog header
+    const controllerName = (kind == ControllerDialogKind.CREATE)
         ? "a new controller"
-        : controller!.id
-    }`
-
-
-    // Copying of the property attribute (NOT USING THE REFERENCE DIRECTLY)
-    const copied: ControllerProperties =
-        (kind == ControllerDialogKind.MODIFY)
-            ? {...controller!}
-            : {
-                id: "",
-                interval: 5,
-            }
-
+        : controllerProperties.id
+    const dialogHeader = {
+        caption: `Settings of ${controllerName}`,
+        description: `Edit the properties of ${controllerName}`
+    }
 
     // Lambda for determining the property output at a special modal result
     const getProperties = (number: ControllerDialogSubmitResult) => {
         switch (number) {
-            case ControllerDialogSubmitResult.SUBMIT : {return copied}
-            default: return undefined
+            case ControllerDialogSubmitResult.SUBMIT : return controllerProperties
+            default: return initialProperties
         }
     }
 
@@ -147,45 +208,12 @@ export function ControllerDialog(
 
             {/* Header with caption */}
             <DialogHeader>
-                <DialogTitle>{caption}</DialogTitle>
-                <DialogDescription>
-                    Edit the preferences of a controller.
-                </DialogDescription>
+                <DialogTitle>{dialogHeader.caption}</DialogTitle>
+                <DialogDescription>{dialogHeader.description}</DialogDescription>
             </DialogHeader>
 
-            {/* Editing fields for the property values */}
-            <div className="grid gap-4 py-4">
-
-                {/* Setting Name */}
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="id" className="text-right">
-                        ID
-                    </Label>
-                    <Input
-                        id="id"
-                        type="text"
-                        value={copied.id}
-                        onChange={(e) => copied.id = e.target.value.trim()}
-                        className="col-span-3"
-                    />
-                </div>
-
-                {/* Setting Interval */}
-                <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="interval" className="text-right">
-                        Interval
-                    </Label>
-                    <Input
-                        id="interval"
-                        type="number"
-                        min={0}
-                        value={copied.interval}
-                        onChange={(e) => copied.interval = parseInt(e.target.value)}
-                        className="col-span-3"
-                    />
-                </div>
-
-            </div>
+            {/* Inputs */}
+            <ControllerDialogInputs data={controllerProperties} onValueChange={setControllerProperties} />
 
             {/* Button footer (with callback) */}
             <ControllerDialogButtons kind={kind} onButtonClick={(result) => {

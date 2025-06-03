@@ -22,12 +22,10 @@ import {
 } from "./controllerDialog"
 
 import {
-    type ControllerProperties
-} from "./controllerProperties"
-import {
     ControllerDialogKind,
     type ControllerDialogCallback
 } from "./controllerDialog.types"
+import type {ControllerProperties} from "@/types/apiTypes.ts";
 
 /**
  * Method for creating a grid card representing a controller
