@@ -62,11 +62,6 @@ function Content() {
                             -Infrastrukturen module <br/>
                             during the summer semester 2025.<br/><br/>
 
-                            Robert – Backend & MQTT Integration<br/>
-
-                            Pascal – Frontend Development & Data Visualization<br/>
-
-                            Danilo – Sensor Setup & Microcontroller Programming<br/>
                         </p>
 
                         <h2 style={{fontSize: "20px", fontWeight: "bold"}}>Why AirAlert?</h2>
